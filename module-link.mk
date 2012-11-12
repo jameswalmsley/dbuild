@@ -19,33 +19,38 @@ endif
 
 
 TEMP_TARGETS=$(filter-out $(AR_TARGETS), $(TARGETS))
-KERN_TARGETS=$(filter-out *.img, $(TEMP_TARGETS))
+#SO_TARGETS=$(filter %.so, $(TEMP_TARGETS))
+KERN_TARGETS=$(filter %.img, $(TEMP_TARGETS))
 
 RI_TARGETS=$(filter-out $(KERN_TARGETS), $(TEMP_TARGETS))
+#RI_TARGETS=$(filter-out $(SO_TARGETS), $(TEMP2_TARGETS))
+
+
+$(SO_TARGETS):
 
 
 $(RI_TARGETS):
-ifeq ($(RBUILD_VERBOSE_CMD), 0)
-	$(Q)$(PRETTY) --rbuild "LD" $(MODULE_NAME) $@
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "LD" $(MODULE_NAME) $@
 endif
 	$(Q)$(CXX) $(OBJECTS) $(ARCHIVES) $(LDFLAGS) $(LDLIBS) -o $@
 
 
 %: %.c
-ifeq ($(RBUILD_VERBOSE_CMD), 0)
-	$(Q)$(PRETTY) --rbuild "CC|LD" $(MODULE_NAME) $@
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "CC|LD" $(MODULE_NAME) $@
 endif
 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $< -o $@
 
 output/%: source/%.c
-ifeq ($(RBUILD_VERBOSE_CMD), 0)
-	$(Q)$(PRETTY) --rbuild "CC|LD" $(MODULE_NAME) $@
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "CC|LD" $(MODULE_NAME) $@
 endif
 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $< -o $@
 
 output/%: source/%.o
-ifeq ($(RBUILD_VERBOSE_CMD), 0)
-	$(Q)$(PRETTY) --rbuild "LD" $(MODULE_NAME) $@
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "LD" $(MODULE_NAME) $@
 endif
 	$(Q)$(CC) $(LDFLAGS) $(LDLIBS) $< -o $@
 
