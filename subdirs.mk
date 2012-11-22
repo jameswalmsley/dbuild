@@ -5,6 +5,8 @@
 #
 
 .PHONY:$(SUBDIRS)
+.PHONY:$(SUB_KBUILD)
+.PHONY:$(SUB_GENERIC)
 
 #
 #	Each listed item in the SUBDIRS variable shall be executed in parralel.
@@ -18,7 +20,7 @@ $(SUBDIRS):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $@"
 endif
-	$(Q)$(MAKE) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS)
+	$(Q)$(MAKE) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET)
 
 
 #
@@ -30,10 +32,43 @@ ifeq ($(DBUILD_VERBOSE_CMD), 0)
 endif
 	$(Q)$(MAKE) -C $(@:%.clean=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean
 
+#
+#	Calls a KBuild based make, but pipes through our pretty system to normalise output.
+#
+$(SUB_KBUILD):
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $@"
+endif
+	$(Q)$(MAKE) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET) |  $(PRETTY_SUBKBUILD) $@
+
+$(SUB_KBUILD:%=%.clean):
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "CLDIR" $(MODULE_NAME) "$(@:%.clean=%)"
+endif
+	$(Q)$(MAKE) -C $(@:%.clean=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBKBUILD) "$(@:%.clean=%)"
+
+#
+#	A Generic Prettyfier for sub-makes that simply use full GCC output!
+#
+$(SUB_GENERIC):
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $@"
+endif
+	$(Q)$(MAKE) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET)  | $(PRETTY_SUBGENERIC) $@
+
+
+#
+#	Sub-dir Clean targets. (Creates $SUBDIR.clean).
+#
+$(SUB_GENERIC:%=%.clean):
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "CLDIR" $(MODULE_NAME) "$(@:%.clean=%)"
+endif
+	$(Q)$(MAKE) -C $(@:%.clean=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBGENERIC)  $@
 
 #
 #	Hook sub-dir cleaning to the main clean method.
 #
-clean.subdirs: $(SUBDIRS:%=%.clean)
+clean.subdirs: $(SUBDIRS:%=%.clean) $(SUB_KBUILD:%=%.clean) $(SUB_GENERIC:%=%.clean)
 	@:
 clean: clean.subdirs

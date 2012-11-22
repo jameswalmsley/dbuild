@@ -70,7 +70,7 @@ CFLAGS		+= -c
 #
 
 dbuild_entry: dbuild_splash | _all
-_all: $(TARGETS) $(SUBDIRS) $(MODULE_TARGET) | silent
+_all: $(TARGETS) $(SUBDIRS) $(SUB_KBUILD) $(SUB_GENERIC) $(MODULE_TARGET) | silent
 
 
 include $(BASE).dbuild/verbosity.mk
@@ -81,6 +81,7 @@ include $(BASE).dbuild/module-link.mk
 include $(BASE).dbuild/c-objects.mk
 include $(BASE).dbuild/cpp-objects.mk
 include $(BASE).dbuild/asm-objects.mk
+include $(BASE).dbuild/info.mk
 
 #
 #	DBuild Splash
