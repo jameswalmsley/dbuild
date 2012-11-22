@@ -26,6 +26,7 @@ DBUILD_VERSION_DATE=October 2010
 #
 MAKEFLAGS += -rR --no-print-directory
 
+all: dbuild_splash _all
 #
 #	Optional Include directive, blue build attempts to build using lists of objects,
 #	targets and subdirs as found in objects.mk and subdirs.mk
@@ -68,8 +69,8 @@ CFLAGS		+= -c
 #	nothing to do.
 #
 
-dbuild_entry: dbuild_splash | all
-all: $(TARGETS) $(SUBDIRS) $(MODULE_TARGET) | silent
+dbuild_entry: dbuild_splash | _all
+_all: $(TARGETS) $(SUBDIRS) $(MODULE_TARGET) | silent
 
 
 include $(BASE).dbuild/verbosity.mk
