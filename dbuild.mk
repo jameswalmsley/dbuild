@@ -82,6 +82,9 @@ include $(BASE).dbuild/c-objects.mk
 include $(BASE).dbuild/cpp-objects.mk
 include $(BASE).dbuild/asm-objects.mk
 include $(BASE).dbuild/info.mk
+include $(BASE).dbuild/configure.mk
+include $(BASE).dbuild/install.mk
+include $(BASE).dbuild/distclean.mk
 
 #
 #	DBuild Splash
