@@ -17,6 +17,8 @@ while(line):
         action = "CHECK"
     elif("Building " in line):
         action = "BUILD"
+    elif("rm -f" in line):
+        action = "RM"
     else:
         action = "CONF"
 

@@ -62,7 +62,7 @@ $(SUB_KBUILD:%=%.clean_do):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean_do=%)"
 endif
-	$(Q)$(MAKE) $(MAKE_FLAGS) -C $(@:%.clean_do=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBKBUILD) "$(@:%.clean=%)"
+	$(Q)$(MAKE) $(MAKE_FLAGS) -C $(@:%.clean_do=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBKBUILD) "$(@:%.clean_do=%)"
 
 #
 #
@@ -81,7 +81,7 @@ $(SUB_GENERIC:%=%.clean_do):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean_do=%)"
 endif
-	$(Q)$(MAKE) $(MAKE_FLAGS) -C $(@:%.clean_do=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBGENERIC)  $@
+	$(Q)$(MAKE) $(MAKE_FLAGS) -C $(@:%.clean_do=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBGENERIC)  "$(@:%.clean_do=%)"
 
 #
 #
