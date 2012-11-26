@@ -7,7 +7,7 @@ PCHMOD		= $(BASE).dbuild/pretty/prettychmod.py
 PRETTYSAMBA	= $(BASE).dbuild/pretty/prettysamba.py
 PRETTYLINUX = $(BASE).dbuild/pretty/prettylinux.py
 PRETTY_SUBKBUILD = $(PRETTYLINUX)
-PRETTY_SUBGENERIC = $(BASE).dbuild/pretty/prettylinux.py
+PRETTY_SUBGENERIC = $(BASE).dbuild/pretty/prettydefault.py
 PTODO		= $(BASE).dbuild/pretty/todo.py
 
 ifeq ($(DBUILD_VERBOSE_CMD), 1)

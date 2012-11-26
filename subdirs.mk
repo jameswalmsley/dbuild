@@ -20,7 +20,7 @@ $(SUBDIRS):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $@"
 endif
-	$(Q)$(MAKE) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET)
+	$(Q)$(MAKE) $(MAKE_FLAGS) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET)
 
 
 #
@@ -30,7 +30,7 @@ $(SUBDIRS:%=%.clean_do):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CLDIR" $(MODULE_NAME) "$(@:%.clean=%)"
 endif
-	$(Q)$(MAKE) -C $(@:%.clean_do=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean
+	$(Q)$(MAKE) $(MAKE_FLAGS) -C $(@:%.clean_do=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean
 
 #
 #	Calls a KBuild based make, but pipes through our pretty system to normalise output.
@@ -39,13 +39,13 @@ $(SUB_KBUILD):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $@"
 endif
-	$(Q)$(MAKE) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET) |  $(PRETTY_SUBKBUILD) $@
+	$(Q)$(MAKE) $(MAKE_FLAGS) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET) |  $(PRETTY_SUBKBUILD) $@
 
 $(SUB_KBUILD:%=%.clean_do):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CLDIR" $(MODULE_NAME) "$(@:%.clean=%)"
 endif
-	$(Q)$(MAKE) -C $(@:%.clean_do=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBKBUILD) "$(@:%.clean=%)"
+	$(Q)$(MAKE) $(MAKE_FLAGS) -C $(@:%.clean_do=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBKBUILD) "$(@:%.clean=%)"
 
 #
 #	A Generic Prettyfier for sub-makes that simply use full GCC output!
@@ -54,7 +54,7 @@ $(SUB_GENERIC):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $@"
 endif
-	$(Q)$(MAKE) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET)  | $(PRETTY_SUBGENERIC) $@
+	$(Q)$(MAKE) $(MAKE_FLAGS) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET)  | $(PRETTY_SUBGENERIC) $@
 
 
 #
@@ -64,10 +64,10 @@ $(SUB_GENERIC:%=%.clean_do):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CLDIR" $(MODULE_NAME) "$(@:%.clean=%)"
 endif
-	$(Q)$(MAKE) -C $(@:%.clean_do=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBGENERIC)  $@
+	$(Q)$(MAKE) $(MAKE_FLAGS) -C $(@:%.clean_do=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBGENERIC)  $@
 
 
-	
+
 CLEAN_LIST=$(SUBDIRS) $(SUB_KBUILD) $(SUB_GENERIC)
 
 .SECONDEXPANSION:
@@ -77,4 +77,21 @@ clean: $(CLEAN_LIST:%=%.clean)
 info.cleanlist:
 	   @echo $(CLEAN_LIST)
 
+
+$(SUBDIRS_SAFE):
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "!SAFE!" $(MODULE_NAME) "Building $@"
+endif
+	$(Q)cd $@ && bash -c "$(MAKE) $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET)"
+#
+#	Sub-dir Clean targets. (Creates $SUBDIR.clean).
+#
+$(SUBDIRS_SAFE:%=%.clean_do):
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "CLDIR" $(MODULE_NAME) "$(@:%.clean=%)"
+endif
+	$(Q)cd $(@:%.clean_do=%) && bash -c "$(MAKE) $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean"
+
+
 .PHONY: clean clean.subdirs $(CLEAN_LIST:%=%.clean) $(CLEAN_LIST:%=%.clean_pre) $(CLEAN_LIST:%=%.clean_do) $(CLEAN_LIST:%=%.clean_post) info.cleanlist
+.PHONY: $(SUBDIRS_SAFE)
