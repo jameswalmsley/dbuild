@@ -1,7 +1,8 @@
-$(INSTALL_LIST:%=%.install_do):
-		[ ! -f $(@:%.install_do=%)/Makefile ] || $(MAKE) -C $(@:%.install_do=%) DESTDIR=$(INSTALL_ROOT_DESTDIR)$(@:%.install_do=%).destdir install
 .SECONDEXPANSION:
-$(INSTALL_LIST:%=%.install): | $$@_pre $$@_do $$@_post
+$(INSTALL_LIST:%=%.install_do): %.install_do: %.install_pre
+		[ ! -f $(@:%.install_do=%)/Makefile ] || $(MAKE) -C $(@:%.install_do=%) DESTDIR=$(INSTALL_DESTDIR)$(@:%.install_do=%).destdir install
+$(INSTALL_LIST:%=%.install_post): %.install_post: %.install_do
+$(INSTALL_LIST:%=%.install): %.install: %.install_post
 install: $(INSTALL_LIST:%=%.install)
 
 info.installlist:

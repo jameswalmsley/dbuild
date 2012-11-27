@@ -1,7 +1,8 @@
-$(DISTCLEAN_LIST:%=%.distclean_do):
-		[ ! -f $(@:%.distclean_do=%)/Makefile ] || $(MAKE) -C $(@:%.distclean_do=%) distclean
 .SECONDEXPANSION:
-$(DISTCLEAN_LIST:%=%.distclean): | $$@_pre $$@_do $$@_post
+$(DISTCLEAN_LIST:%=%.distclean_do): %.distclean_do: %.distclean_pre
+		[ ! -f $(@:%.distclean_do=%)/Makefile ] || $(MAKE) -C $(@:%.distclean_do=%) distclean
+$(DISTCLEAN_LIST:%=%.distclean_post): %.distclean_post: %.distclean_do
+$(DISTCLEAN_LIST:%=%.distclean): %.distclean: %.distclean_post
 distclean: $(DISTCLEAN_LIST:%=%.distclean)
 
 info.distcleanlist:
