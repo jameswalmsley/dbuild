@@ -1,10 +1,16 @@
-$(INSTALL_LIST:%=%.install_do): %.install_do: %.install_pre
-		[ ! -f $(@:%.install_do=%)/Makefile ] || $(MAKE) -C $(@:%.install_do=%) DESTDIR=$(INSTALL_DESTDIR)$(@:%.install_do=%).destdir install
-$(INSTALL_LIST:%=%.install_post): %.install_post: %.install_do
-$(INSTALL_LIST:%=%.install): %.install: %.install_post
+$(INSTALL_LIST:%=%.install):
+	$(Q)$(MAKE) $@.pre
+	[ ! -f $(@:%.install=%)/Makefile ] || $(MAKE) -C $(@:%.install=%) DESTDIR=$(INSTALL_DESTDIR)$(@:%.install=%).destdir install
+	$(Q)$(MAKE) $@.post
+
 install: $(INSTALL_LIST:%=%.install)
 
 info.installlist:
 	@echo $(INSTALL_LIST)
 
-.PHONY: install $(INSTALL_LIST:%=%.install) $(INSTALL_LIST:%=%.install_pre) $(INSTALL_LIST:%=%.install_do) $(INSTALL_LIST:%=%.install_post) info.installlist
+.PHONY: \
+		install \
+		$(INSTALL_LIST:%=%.install) \
+		$(INSTALL_LIST:%=%.install.pre) \
+		$(INSTALL_LIST:%=%.install.post) \
+		info.installlist
