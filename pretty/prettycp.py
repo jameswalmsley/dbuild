@@ -11,7 +11,7 @@ bCustom     = True
 offset      = 0
 
 if(len(sys.argv) >= 2):
-    if(sys.argv[1] == "--rbuild"):
+    if(sys.argv[1] == "--dbuild"):
         offset = 1
         bCustom = False
 

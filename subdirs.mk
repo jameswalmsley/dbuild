@@ -26,7 +26,9 @@ SUBDIR_LIST= $(SUBDIRS) \
 $(SUBDIRS:%=%):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $(@:%=%)"
-	@echo $@ "Depends on:" $^
+ifeq ($(DBUILD_VERBOSE_DEPS), 1)
+	$(Q)$(PRETTY) --dbuild "^DEPS^" "$@" "$^"
+endif
 endif
 	$(Q)$(MAKE) $(MAKE_FLAGS) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET)
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) BUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
@@ -49,6 +51,9 @@ endif
 $(SUB_KBUILD:%=%):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $@"
+ifeq ($(DBUILD_VERBOSE_DEPS), 1)
+	$(Q)$(PRETTY) --dbuild "^DEPS^" "$@" "$^"
+endif
 endif
 	$(Q)$(MAKE) $(MAKE_FLAGS) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET) |  $(PRETTY_SUBKBUILD) $@
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) BUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
@@ -70,6 +75,9 @@ endif
 $(SUB_GENERIC:%=%):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $(@:%=%)"
+ifeq ($(DBUILD_VERBOSE_DEPS), 1)
+	$(Q)$(PRETTY) --dbuild "^DEPS^" "$@" "$^"
+endif
 endif
 	$(Q)$(MAKE) $(MAKE_FLAGS) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET)  | $(PRETTY_SUBGENERIC) $@
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) BUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
@@ -91,6 +99,9 @@ endif
 $(SUB_SAFE:%=%):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "!SAFE!" $(MODULE_NAME) "Building $(@:%=%)"
+ifeq ($(DBUILD_VERBOSE_DEPS), 1)
+	$(Q)$(PRETTY) --dbuild "^DEPS^" "$@" "$^"
+endif
 endif
 	$(Q)cd $@ && bash -c "$(MAKE) -s -j1 $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET) | $(PRETTY_SUBGENERIC) $@"
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) BUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
