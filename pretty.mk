@@ -10,6 +10,9 @@ PRETTY_SUBKBUILD = $(PRETTYLINUX)
 PRETTY_SUBGENERIC = $(BASE).dbuild/pretty/prettygeneric.py
 PTODO		= $(BASE).dbuild/pretty/todo.py
 
+PRETTYPOST	= $(PRETTY) "POST" $@:%.post=%
+PRETTYPREP	= $(PRETTY) "PREP" $@:%.pre=%
+
 ifeq ($(DBUILD_VERBOSE_CMD), 1)
 #PRETTY=@ #
 endif
