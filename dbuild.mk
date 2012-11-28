@@ -10,15 +10,15 @@
 #	@see		github.com/FullFAT/FullFAT/
 #	@author		James Walmsley	<jwalmsley@riegl.com>
 #
-#	@version	1.0.0 (Armstrong)
+#	@version	1.1.0 (Armstrong)
 #
 
 DBUILD_VERSION_MAJOR=1
-DBUILD_VERSION_MINOR=0
+DBUILD_VERSION_MINOR=1
 DBUILD_VERSION_REVISION=0
 
-DBUILD_VERSION_NAME=Armstrong
-DBUILD_VERSION_DATE=October 2010
+DBUILD_VERSION_NAME=Fourier
+DBUILD_VERSION_DATE=November 2012
 
 #
 #	Let's ensure we have a pure make environment.
