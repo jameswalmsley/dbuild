@@ -27,23 +27,46 @@ while(line):
         else:
             action = "UKNOWN"
             description = "LIBTOOL STEP"
-    else:
-        if(line.startswith("rm")):
-            action = "RM"
-            description = line.strip()
-            valid = True
-        elif(line.strip().startswith("gcc")):
+    elif("libtool" and "--mode=" in line):
+        if("--mode=compile"):
             action = "CC"
-            description = line.strip()
+            description = line.split("-o")[1].split(" ")[1].strip()
             valid = True
-        elif(line.strip().startswith("g++")):
+        else:
+            print "LIBTOOL HORROR"
+    else:
+        stripped = line.strip()
+        if(stripped.startswith("rm")):
+            rm_split = stripped.split("rm")[1].split(" ")
+            if(rm_split[1].strip().startswith("-")):
+                rm_split = rm_split[2:]
+
+            for split in rm_split:
+                if(split.strip() != ""):
+                    prettyformat.pretty("RM", module, split, False)
+
+        elif(stripped.startswith("gcc")):
+            action = "CC"
+            description = stripped.split("-o")[1].split(" ")[1].strip()
+            valid = True
+        elif(stripped.startswith("c++")):
+            action = "CXX"
+            description = stripped.split("-o")[1].split(" ")[1].strip()
+            valid = True
+        elif(stripped.startswith("g++")):
             action =  "CXX"
-            description = line.strip()
+            description = stripped.split("-o")[1].split(" ")[1].strip()
             valid = True
-        elif(line.strip().startswith("checking")):
+        elif(stripped.startswith("ar")):
+            action = "AR"
+            description = stripped.split(".a")[0] + ".a"
+            valid = True
+        elif(stripped.startswith("checking")):
             action = "CHK"
-            description = line.strip()
+            description = stripped.split("checking")[1]
             valid = True
+        elif(stripped.startswith("make[") and ("Nothing to be done for" in stripped)):
+                 valid = False
         else:
             action = "MISC"
             description = line.strip()
