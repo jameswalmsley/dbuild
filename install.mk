@@ -1,4 +1,3 @@
-.SECONDEXPANSION:
 $(INSTALL_LIST:%=%.install_do): %.install_do: %.install_pre
 		[ ! -f $(@:%.install_do=%)/Makefile ] || $(MAKE) -C $(@:%.install_do=%) DESTDIR=$(INSTALL_DESTDIR)$(@:%.install_do=%).destdir install
 $(INSTALL_LIST:%=%.install_post): %.install_post: %.install_do

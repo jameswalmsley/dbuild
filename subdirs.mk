@@ -97,7 +97,6 @@ endif
 #
 #	Handle pre and post targets
 #
-#.SECONDEXPANSION:
 
 $(SUBDIR_LIST:%=%.do): %.do: %.pre
 $(SUBDIR_LIST:%=%.post): %.post: %.do

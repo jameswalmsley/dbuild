@@ -1,4 +1,3 @@
-.SECONDEXPANSION:
 $(DISTCLEAN_LIST:%=%.distclean_do): %.distclean_do: %.distclean_pre
 		[ ! -f $(@:%.distclean_do=%)/Makefile ] || $(MAKE) -C $(@:%.distclean_do=%) distclean
 $(DISTCLEAN_LIST:%=%.distclean_post): %.distclean_post: %.distclean_do
