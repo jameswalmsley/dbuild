@@ -17,7 +17,16 @@ SUBDIR_LIST= $(SUBDIRS) \
 			 $(SUB_GENERIC) \
 			 $(SUB_SAFE)
 
-###########################################################################################################
+#
+#	Sub-dir Clean targets. (Creates $SUBDIR.clean).
+#
+$(SUBDIRS):
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $@"
+endif
+	$(Q)$(MAKE) $(MAKE_FLAGS) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET)
+
+
 #
 #	Sub-dir Clean targets. (Creates $SUBDIR.clean).
 #
@@ -32,11 +41,11 @@ endif
 #
 $(SUBDIRS:%=%.clean_do):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
-	$(Q)$(PRETTY) --dbuild "CLDIR" $(MODULE_NAME) "$(@:%.clean_do=%)"
+	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean_do=%)"
 endif
 	$(Q)$(MAKE) $(MAKE_FLAGS) -C $(@:%.clean_do=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean
 
-###########################################################################################################
+#
 #
 #	Calls a KBuild based make, but pipes through our pretty system to normalise output.
 #
@@ -51,11 +60,11 @@ endif
 #
 $(SUB_KBUILD:%=%.clean_do):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
-	$(Q)$(PRETTY) --dbuild "CLDIR" $(MODULE_NAME) "$(@:%.clean_do=%)"
+	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean_do=%)"
 endif
 	$(Q)$(MAKE) $(MAKE_FLAGS) -C $(@:%.clean_do=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBKBUILD) "$(@:%.clean=%)"
 
-###########################################################################################################
+#
 #
 #	A Generic Prettyfier for sub-makes that simply use full GCC output!
 #
@@ -70,11 +79,11 @@ endif
 #
 $(SUB_GENERIC:%=%.clean_do):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
-	$(Q)$(PRETTY) --dbuild "CLDIR" $(MODULE_NAME) "$(@:%.clean_do=%)"
+	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean_do=%)"
 endif
 	$(Q)$(MAKE) $(MAKE_FLAGS) -C $(@:%.clean_do=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBGENERIC)  $@
 
-###########################################################################################################
+#
 #
 #	A Prettyfier for safe sub-makes!
 #
@@ -83,7 +92,7 @@ ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "!SAFE!" $(MODULE_NAME) "Building $(@:%.do=%)"
 endif
 	$(Q)cd $(@:%.do=%) && bash -c "$(MAKE) -j1 $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET) | $(PRETTY_SUBGENERIC) $(@:%.do=%)"
-	
+
 #
 #   Sub-dir Clean targets. (Creates $SUBDIR.clean_do).
 #
@@ -93,7 +102,6 @@ ifeq ($(DBUILD_VERBOSE_CMD), 0)
 endif
 	$(Q)cd $(@:%.clean_do=%) && bash -c "$(MAKE) -j1 $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBGENERIC) $(@:%.clean_do=%)"
 
-###########################################################################################################
 #
 #	Handle pre and post targets
 #
