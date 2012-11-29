@@ -10,14 +10,14 @@
 #	@see		github.com/FullFAT/FullFAT/
 #	@author		James Walmsley	<jwalmsley@riegl.com>
 #
-#	@version	1.1.0 (Armstrong)
+#	@version	1.2.0 (Bristol)
 #
 
 DBUILD_VERSION_MAJOR=1
-DBUILD_VERSION_MINOR=1
+DBUILD_VERSION_MINOR=2
 DBUILD_VERSION_REVISION=0
 
-DBUILD_VERSION_NAME=Fourier
+DBUILD_VERSION_NAME=Bristol
 DBUILD_VERSION_DATE=November 2012
 
 #
@@ -31,9 +31,15 @@ all: dbuild_splash _all
 #	Optional Include directive, blue build attempts to build using lists of objects,
 #	targets and subdirs as found in objects.mk and subdirs.mk
 #
+-include .config.mk
 -include objects.mk
 -include targets.mk
 -include subdirs.mk
+
+#
+#	Simple backwards compatible for configurable object builds!
+#
+OBJECTS += $(OBJECTS-y)
 
 #
 #	A top-level configureation file can be found in the project root dir.
@@ -61,17 +67,7 @@ override SIZE		= $(TOOLCHAIN)size
 
 CFLAGS		+= -c
 
-#
-#	Provide a default target named all,
-#	This is dependent on $(TARGETS) and $(SUBDIRS)
-#
-#	All is finally dependent on silent, to keep make silent when it has
-#	nothing to do.
-#
-
-dbuild_entry: dbuild_splash | _all
-_all: $(TARGETS) $(SUBDIRS) $(SUB_KBUILD) $(SUB_GENERIC) $(MODULE_TARGET) | silent
-
+$(TARGETS): objects.mk
 
 include $(BASE).dbuild/verbosity.mk
 include $(BASE).dbuild/pretty.mk
@@ -85,6 +81,17 @@ include $(BASE).dbuild/info.mk
 include $(BASE).dbuild/configure.mk
 include $(BASE).dbuild/install.mk
 include $(BASE).dbuild/distclean.mk
+
+
+#
+#	Provide a default target named all,
+#	This is dependent on $(TARGETS) and $(SUBDIRS)
+#
+#	All is finally dependent on silent, to keep make silent when it has
+#	nothing to do.
+#
+dbuild_entry: dbuild_splash | _all
+_all: $(TARGETS) $(SUBDIR_LIST) $(MODULE_TARGET) | silent
 
 #
 #	DBuild Splash
