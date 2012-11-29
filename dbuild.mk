@@ -10,14 +10,14 @@
 #	@see		github.com/FullFAT/FullFAT/
 #	@author		James Walmsley	<jwalmsley@riegl.com>
 #
-#	@version	1.2.0 (Bristol)
+#	@version	1.3.0 (Archimedes)
 #
 
 DBUILD_VERSION_MAJOR=1
-DBUILD_VERSION_MINOR=2
+DBUILD_VERSION_MINOR=3
 DBUILD_VERSION_REVISION=0
 
-DBUILD_VERSION_NAME=Bristol
+DBUILD_VERSION_NAME=Archimedes
 DBUILD_VERSION_DATE=November 2012
 
 #
@@ -67,7 +67,14 @@ override SIZE		= $(TOOLCHAIN)size
 
 CFLAGS		+= -c
 
-$(TARGETS): objects.mk
+#
+#	Incase the .config.mk file does not exist, create a blank one.
+#	We should eventually integrate this with KConfig or something nice.
+#
+.config.mk:
+	@touch .config.mk
+
+$(TARGETS): objects.mk .config.mk
 
 include $(BASE).dbuild/verbosity.mk
 include $(BASE).dbuild/pretty.mk
@@ -100,7 +107,7 @@ _all: $(TARGETS) $(SUBDIR_LIST) $(MODULE_TARGET) | silent
 dbuild_splash:
 ifeq ($(DBUILD_SPLASHED), 1)
 else
-	@echo " Dark Builder - Unified Build Environment"
+	@echo " Dark Builder"
 	@echo " Version ($(DBUILD_VERSION_MAJOR).$(DBUILD_VERSION_MINOR).$(DBUILD_VERSION_REVISION) - $(DBUILD_VERSION_NAME))"
 endif
 
