@@ -45,21 +45,29 @@ while(line):
                 if(split.strip() != ""):
                     prettyformat.pretty("RM", module, split, False)
 
-        elif(stripped.startswith("gcc")):
+        elif(stripped.split(" ")[0].endswith("gcc")):
             action = "CC"
             description = stripped.split("-o")[1].split(" ")[1].strip()
             valid = True
-        elif(stripped.startswith("c++")):
+        elif(stripped.split(" ")[0].endswith("c++")):
             action = "CXX"
             description = stripped.split("-o")[1].split(" ")[1].strip()
             valid = True
-        elif(stripped.startswith("g++")):
+        elif(stripped.split(" ")[0].endswith("g++")):
             action =  "CXX"
             description = stripped.split("-o")[1].split(" ")[1].strip()
             valid = True
-        elif(stripped.startswith("ar")):
+        elif(stripped.split(" ")[0].endswith("ar")):
             action = "AR"
             description = stripped.split(".a")[0] + ".a"
+            valid = True
+        elif(stripped.split(" ")[0].endswith("nm")):
+            action = "SYMS"
+            print stripped
+            splits = stripped.split("-o")
+            if(len(splits) < 2):
+                splits = stripped.split("-p")
+            description = splits[1].split(" ")[1].strip()
             valid = True
         elif(stripped.startswith("checking")):
             action = "CHK"
