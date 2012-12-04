@@ -34,11 +34,28 @@ SUBDIR_LIST += $(SUB_GENERIC)
 SUBDIR_LIST += $(SUB_SAFE)
 
 
+###########################################################################################################
 #
-#	In the following section we define the implicit SUBDIR rules. Note there are
-#	multiple rules for slight variations, but they all follow the same pattern.
+#	Deps Generation.
 #
+DSUBDIR_LIST += $(DSUB_GENERIC) 
+DSUBDIR_LIST += $(DSUB_SAFE) 
 
+SUBDIR_LIST += $(DSUBDIR_LIST)
+
+DEPS_ROOT_DIR = .deps/
+
+$(DSUBDIR_LIST:%=%.deps):
+	$(Q)mkdir -p $(DEPS_ROOT_DIR)$(dir $@)
+	$(Q)bash $(BASE).dbuild/makedeps.sh $(@:%.deps=%) $(@:%.deps=%) > $(DEPS_ROOT_DIR)$(@:%.deps=%).d
+
+deps: $(DSUBDIR_LIST:%=%.deps)
+
+.PHONY: deps $(DSUBDIR_LIST:%=%.deps)
+
+-include $(DEPS_ROOT_DIR)$(DSUBDIR_LIST:%=%.d)
+
+###########################################################################################################
 #
 #	Standard SUBDIR mechanism for the best case, that the SUBDIR contains a project
 #	that also uses DBUILD.
@@ -50,6 +67,7 @@ ifeq ($(DBUILD_VERBOSE_DEPS), 1)
 	$(Q)$(PRETTY) --dbuild "^DEPS^" "$@" "$^"
 endif
 endif
+	$(Q)$(MAKE) -s BUILD_SPLASHED=1 $@.pre
 	$(Q)$(MAKE) $(MAKE_FLAGS) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET)
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
 
@@ -61,6 +79,7 @@ $(SUBDIRS:%=%.clean):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean=%)"
 endif
+	$(Q)$(MAKE) -s BUILD_SPLASHED=1 $@.pre
 	$(Q)$(MAKE) $(MAKE_FLAGS) -C $(@:%.clean=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
 
@@ -78,6 +97,7 @@ ifeq ($(DBUILD_VERBOSE_DEPS), 1)
 	$(Q)$(PRETTY) --dbuild "^DEPS^" "$@" "$^"
 endif
 endif
+	$(Q)$(MAKE) MAKEFLAGS= -s BUILD_SPLASHED=1 $@.pre
 	$(Q)$(MAKE) $(MAKE_FLAGS) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET) |  $(PRETTY_SUBKBUILD) $@
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
 
@@ -88,6 +108,7 @@ $(SUB_KBUILD:%=%.clean):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean=%)"
 endif
+	$(Q)$(MAKE) MAKEFLAGS= -s BUILD_SPLASHED=1 $@.pre
 	$(Q)$(MAKE) $(MAKE_FLAGS) -C $(@:%.clean=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBKBUILD) "$(@:%.clean=%)"
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
 
@@ -103,6 +124,7 @@ ifeq ($(DBUILD_VERBOSE_DEPS), 1)
 	$(Q)$(PRETTY) --dbuild "^DEPS^" "$@" "$^"
 endif
 endif
+	$(Q)$(MAKE) MAKEFLAGS= BUILD_SPLASHED=1 -s $@.pre
 	$(Q)$(MAKE) $(MAKE_FLAGS) -C $@ DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET)  | $(PRETTY_SUBGENERIC) $@
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
 
@@ -113,9 +135,13 @@ $(SUB_GENERIC:%=%.clean):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean=%)"
 endif
+	$(Q)$(MAKE) MAKEFLAGS= -s BUILD_SPLASHED=1 $@.pre
 	$(Q)$(MAKE) $(MAKE_FLAGS) -C $(@:%.clean=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBGENERIC)  "$(@:%.clean=%)"
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
 
+
+
+###########################################################################################################
 #
 #	This provides a method for building modules in the absolute worst case scenario!
 #	This is required if its impossible to build the target in parrallel reliably.
@@ -132,6 +158,7 @@ ifeq ($(DBUILD_VERBOSE_DEPS), 1)
 	$(Q)$(PRETTY) --dbuild "^DEPS^" "$@" "$^"
 endif
 endif
+	$(Q)$(MAKE) MAKEFLAGS= -s BUILD_SPLASHED=1 $@.pre
 	$(Q)cd $@ && bash -c "$(MAKE) -s -j1 $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(SUBDIR_TARGET) | $(PRETTY_SUBGENERIC) $@"
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
 
@@ -142,15 +169,58 @@ $(SUB_SAFE:%=%.clean):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean=%)"
 endif
+	$(Q)$(MAKE) MAKEFLAGS= -s BUILD_SPLASHED=1 $@.pre
 	$(Q)cd $(@:%.clean=%) && bash -c "$(MAKE) -s -j1 $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBGENERIC) $(@:%.clean=%)"
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
 
 
-#
-#	Handle pre and post targets
-#
-$(SUBDIR_LIST:%=%): %: %.pre
-(SUBDIR_LIST:%=%.clean): %.clean: %.clean.pre
+#$(DSUB_GENERIC:%=$(DEPS_ROOT_DIR)%.stamp): $($(@:$(DEPS_ROOT_DIR)%.stamp=DEPS_%))
+$(DSUB_GENERIC:%=$(DEPS_ROOT_DIR)%.stamp):
+#ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $(@:$(DEPS_ROOT_DIR)%.stamp=%)"
+#ifeq ($(DBUILD_VERBOSE_DEPS), 1)
+#	$(Q)$(PRETTY) --dbuild "^DEPS^" "$(@:$(DEPS_ROOT_DIR)%.stamp=%)" "$^"
+#endif
+#endif
+	$(Q)$(MAKE) MAKEFLAGS= -s $(@:$(DEPS_ROOT_DIR)%.stamp=%).pre
+	$(Q)$(MAKE) MAKEFLAGS= -C $(@:$(DEPS_ROOT_DIR)%.stamp=%) $(SUBDIR_TARGET) | $(PRETTY_SUBGENERIC) "$(@:$(DEPS_ROOT_DIR)%.stamp=%)"
+	$(Q)$(MAKE) MAKEFLAGS= -s $(@:$(DEPS_ROOT_DIR)%.stamp=%).post
+	$(Q)touch $@
+
+$(DSUB_GENERIC:%=%):
+	$(Q)$(MAKE) $(@:%=$(DEPS_ROOT_DIR)%.stamp)
+
+$(DSUB_GENERIC:%=%.force):
+	$(Q)rm -f $(@:%.force=$(DEPS_ROOT_DIR)%.stamp)
+	$(Q)$(MAKE) $(@:%.force=%)
+
+$(DSUB_GENERIC:%=%.clean):
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean=%)"
+endif
+	$(Q)$(MAKE) MAKEFLAGS= -s BUILD_SPLASHED=1 $@.pre
+	$(Q)$(MAKE) MAKEFLAGS= -C $(@:%.clean=%) BUILD_SPLASHED=1 clean | $(PRETTY_SUBGENERIC)  "$(@:%.clean=%)"
+	$(Q)$(MAKE) MAKEFLAGS= -s BUILD_SPLASHED=1 $@.post
+	$(Q)rm -f $(@:%.clean=$(DEPS_ROOT_DIR)%.stamp)
+
+
+
+$(DSUB_SAFE:%=%):
+	$(Q)$(MAKE) $(@:%=$(DEPS_ROOT_DIR)%.stamp)
+
+$(DSUB_SAFE:%=%.force):
+	$(Q)rm -f $(@:%.force=$(DEPS_ROOT_DIR)%.stamp)
+	$(Q)$(MAKE) $(@:%.force=%)
+
+$(DSUB_SAFE:%=%.clean):
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean=%)"
+endif
+	$(Q)$(MAKE) MAKEFLAGS= -s BUILD_SPLASHED=1 $@.pre
+	$(Q)cd $(@:%.clean=%) && bash -c "$(MAKE) MAKEFLAGS= -j1 BUILD_SPLASHED=1 clean | $(PRETTY_SUBGENERIC) $(@:%.clean=%)"
+	$(Q)$(MAKE) MAKEFLAGS= -s BUILD_SPLASHED=1 $@.post
+	$(Q)rm -f $(@:%.clean=$(DEPS_ROOT_DIR)%.stamp)
+
 
 clean: $(SUBDIR_LIST:%=%.clean)
 

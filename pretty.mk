@@ -6,8 +6,12 @@ PRM			= $(PRETTIFY) --dbuild "RM"
 PCHMOD		= $(BASE).dbuild/pretty/prettychmod.py
 PRETTYSAMBA	= $(BASE).dbuild/pretty/prettysamba.py
 PRETTYLINUX = $(BASE).dbuild/pretty/prettylinux.py
-PRETTY_SUBKBUILD = $(PRETTYLINUX)
-PRETTY_SUBGENERIC = $(BASE).dbuild/pretty/prettygeneric.py
+ifndef PRETTY_SUBKBUILD 
+  PRETTY_SUBKBUILD = $(PRETTYLINUX)
+endif
+ifndef PRETTY_SUBGENERIC 
+  PRETTY_SUBGENERIC = $(BASE).dbuild/pretty/prettygeneric.py
+endif
 PTODO		= $(BASE).dbuild/pretty/todo.py
 
 PRETTYPOST	= $(PRETTY) "POST" $(@:%.post=%)

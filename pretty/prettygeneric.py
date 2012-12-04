@@ -30,7 +30,7 @@ while(line):
     elif("libtool" and "--mode=" in line):
         if("--mode=compile"):
             action = "CC"
-            description = line.split("-o")[1].split(" ")[1].strip()
+			#description = line.split("-o")[1].split(" ")[1].strip()
             valid = True
         else:
             print "LIBTOOL HORROR"

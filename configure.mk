@@ -8,9 +8,11 @@
 #	Many projects use autoconf system...."shudders" :S
 #	This provides a nice way to call those.
 #
-$(CONFIGURE_LIST:%=%.configure): %: %.pre
+$(CONFIGURE_LIST:%=%.configure):
+	$(Q)$(MAKE) $@.pre
 	@cd  $(@:%.configure=%) && ./configure $(CONFIG_OPTIONS) CC=$(TOOLCHAIN)gcc CXX=$(TOOLCHAIN)c++ LD=$(TOOLCHAIN)ld AR=$(TOOLCHAIN)ar $(PIPE_OPTIONS)
-	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 CONFIG_OPTIONS="$(CONFIG_OPTIONS)" $@.post
+	$(Q)$(MAKE) $@.post
+
 
 configure: $(CONFIGURE_LIST:%=%.configure)
 

@@ -5,10 +5,11 @@
 #
 
 $(INSTALL_LIST:%=%.install): %: %.pre
+	$(Q)$(MAKE) $@.pre DESTDIR=$(INSTALL_DESTDIR)
 	@[ ! -f $(@:%.install=%)/Makefile ] || $(MAKE) -C $(@:%.install=%) DESTDIR=$(INSTALL_DESTDIR)$(@:%.install=%).destdir install
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 DESTDIR=$(INSTALL_DESTDIR) $@.post
 
-$(INSTALL_LIST:%=%.install): %: %.pre
+$(INSTALL_LIST:%=%.install):
 
 install: $(INSTALL_LIST:%=%.install)
 
