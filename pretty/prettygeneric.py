@@ -46,9 +46,12 @@ while(line):
                     prettyformat.pretty("RM", module, split, False)
 
         elif(stripped.split(" ")[0].endswith("gcc")):
+            print stripped
             action = "CC"
-            description = stripped.split("-o")[1].split(" ")[1].strip()
-            valid = True
+            splits = stripped.split("-o")
+            if(len(splits) > 1):
+                description = splits[1].split(" ")[1].strip()
+                valid = True
         elif(stripped.split(" ")[0].endswith("c++")):
             action = "CXX"
             description = stripped.split("-o")[1].split(" ")[1].strip()
