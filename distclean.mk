@@ -5,11 +5,10 @@
 #
 
 
-$(DISTCLEAN_LIST:%=%.distclean): %: %.pre
-	@[ ! -f $(@:%.distclean=%)/Makefile ] || $(MAKE) -C $(@:%.distclean=%) distclean
-	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $@.post
-
-$(DISTCLEAN_LIST:%=%.distclean): %: %.pre
+$(DISTCLEAN_LIST:%=%.distclean): 
+	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.pre
+	@[ ! -f $(@:%.distclean=%)/Makefile ] || $(MAKE) -C $(@:%.distclean=%) $(MAKE_FLAGS) $(SUBDIR_PARAMS) distclean
+	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
 
 distclean: $(DISTCLEAN_LIST:%=%.distclean)
 

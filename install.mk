@@ -4,10 +4,10 @@
 #	@author	Andreas Friedl <afriedl@riegl.com>
 #
 
-$(INSTALL_LIST:%=%.install): %: %.pre
-	$(Q)$(MAKE) $@.pre DESTDIR=$(INSTALL_DESTDIR)
-	@[ ! -f $(@:%.install=%)/Makefile ] || $(MAKE) -C $(@:%.install=%) DESTDIR=$(INSTALL_DESTDIR)$(@:%.install=%).destdir install
-	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 DESTDIR=$(INSTALL_DESTDIR) $@.post
+$(INSTALL_LIST:%=%.install):
+	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) DESTDIR=$(INSTALL_DESTDIR) $@.pre 
+	@[ ! -f $(@:%.install=%)/Makefile ] || $(MAKE) -C $(@:%.install=%) $(MAKE_FLAGS) $(SUBDIR_PARAMS) DESTDIR=$(INSTALL_DESTDIR)$(@:%.install=%).destdir install
+	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) DESTDIR=$(INSTALL_DESTDIR) $@.post
 
 $(INSTALL_LIST:%=%.install):
 
