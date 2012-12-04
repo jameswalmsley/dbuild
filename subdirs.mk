@@ -175,7 +175,7 @@ deps: $(DSUBDIR_LIST:%=%.deps)
 #
 #	For generic sub directories
 #
-$(DSUB_GENERIC:%=$(DEPS_ROOT_DIR)%.stamp): $($(@:$(DEPS_ROOT_DIR)%.stamp=DEPS_%))
+$(DSUB_GENERIC:%=$(DEPS_ROOT_DIR)%.stamp): 
 #ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $(@:$(DEPS_ROOT_DIR)%.stamp=%)"
 #ifeq ($(DBUILD_VERBOSE_DEPS), 1)
@@ -198,15 +198,15 @@ $(DSUB_GENERIC:%=%.clean):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean=%)"
 endif
-	$(Q)$(MAKE) MAKEFLAGS= -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(@:%.clean=%).pre
+	$(Q)$(MAKE) MAKEFLAGS= -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.pre
 	$(Q)$(MAKE) MAKEFLAGS= -C $(@:%.clean=%) $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBGENERIC)  "$(@:%.clean=%)"
-	$(Q)$(MAKE) MAKEFLAGS= -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(@:%.clean=%).post
+	$(Q)$(MAKE) MAKEFLAGS= -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
 	$(Q)rm -f $(@:%.clean=$(DEPS_ROOT_DIR)%.stamp)
 
 #
 #	For safe sub directories
 #
-$(DSUB_SAFE:%=$(DEPS_ROOT_DIR)%.stamp): $($(@:$(DEPS_ROOT_DIR)%.stamp=DEPS_%))
+$(DSUB_SAFE:%=$(DEPS_ROOT_DIR)%.stamp): 
 	$(Q)$(PRETTY) --dbuild "!SAFE!" $(MODULE_NAME) "Building $(@:$(DEPS_ROOT_DIR)%.stamp=%)"
 #ifeq ($(DBUILD_VERBOSE_DEPS), 1)
 	$(Q)$(PRETTY) --dbuild "^DEPS^" "$(@:$(DEPS_ROOT_DIR)%.stamp=%)" "$^"
@@ -228,9 +228,9 @@ $(DSUB_SAFE:%=%.clean):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean=%)"
 endif
-	$(Q)$(MAKE) MAKEFLAGS= -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(@:%.clean=%).pre
+	$(Q)$(MAKE) MAKEFLAGS= -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.pre
 	$(Q)cd $(@:%.clean=%) && bash -c "$(MAKE) MAKEFLAGS= -j1 $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBGENERIC) $(@:%.clean=%)"
-	$(Q)$(MAKE) MAKEFLAGS= -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(@:%.clean=%).post
+	$(Q)$(MAKE) MAKEFLAGS= -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
 	$(Q)rm -f $(@:%.clean=$(DEPS_ROOT_DIR)%.stamp)
 
 
