@@ -139,8 +139,6 @@ endif
 	$(Q)$(MAKE) $(MAKE_FLAGS) -C $(@:%.clean=%) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) clean | $(PRETTY_SUBGENERIC)  "$(@:%.clean=%)"
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
 
-
-
 ###########################################################################################################
 #
 #	This provides a method for building modules in the absolute worst case scenario!
@@ -174,8 +172,7 @@ endif
 	$(Q)$(MAKE) -s $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
 
 
-#$(DSUB_GENERIC:%=$(DEPS_ROOT_DIR)%.stamp): $($(@:$(DEPS_ROOT_DIR)%.stamp=DEPS_%))
-$(DSUB_GENERIC:%=$(DEPS_ROOT_DIR)%.stamp):
+$(DSUB_GENERIC:%=$(DEPS_ROOT_DIR)%.stamp): $($(@:$(DEPS_ROOT_DIR)%.stamp=DEPS_%))
 #ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $(@:$(DEPS_ROOT_DIR)%.stamp=%)"
 #ifeq ($(DBUILD_VERBOSE_DEPS), 1)
@@ -204,6 +201,17 @@ endif
 	$(Q)rm -f $(@:%.clean=$(DEPS_ROOT_DIR)%.stamp)
 
 
+
+$(DSUB_SAFE:%=$(DEPS_ROOT_DIR)%.stamp): $($(@:$(DEPS_ROOT_DIR)%.stamp=DEPS_%))
+	$(Q)$(PRETTY) --dbuild "!SAFE!" $(MODULE_NAME) "Building $(@:$(DEPS_ROOT_DIR)%.stamp=%)"
+#ifeq ($(DBUILD_VERBOSE_DEPS), 1)
+	$(Q)$(PRETTY) --dbuild "^DEPS^" "$(@:$(DEPS_ROOT_DIR)%.stamp=%)" "$^"
+#endif
+#endif
+	$(Q)$(MAKE) MAKEFLAGS= -s BUILD_SPLASHED=1 $(@:$(DEPS_ROOT_DIR)%.stamp=%).pre
+	$(Q)cd $(@:$(DEPS_ROOT_DIR)%.stamp=%) && bash -c "$(MAKE) MAKEFLAGS= -j1 BUILD_SPLASHED=1 $(SUBDIR_TARGET) | $(PRETTY_SUBGENERIC) $(@:$(DEPS_ROOT_DIR)%.stamp=%)"
+	$(Q)$(MAKE) MAKEFLAGS= -s BUILD_SPLASHED=1 $(@:$(DEPS_ROOT_DIR)%.stamp=%).post
+	$(Q)touch $@
 
 $(DSUB_SAFE:%=%):
 	$(Q)$(MAKE) $(@:%=$(DEPS_ROOT_DIR)%.stamp)
@@ -234,6 +242,7 @@ $(SUBDIR_LIST:%=%.post): | silent
 		$(SUBDIR_LIST) \
 		$(SUBDIR_LIST:%=%.pre) \
 		$(SUBDIR_LIST:%=%.post) \
+		$(SUBDIR_LIST:%=%.force) \
 		clean \
 		$(SUBDIR_LIST:%=%.clean) \
 		$(SUBDIR_LIST:%=%.clean.pre) \
