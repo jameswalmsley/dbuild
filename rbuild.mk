@@ -20,6 +20,8 @@ RBUILD_VERSION_REVISION=0
 RBUILD_VERSION_NAME=Armstrong
 RBUILD_VERSION_DATA=May 2012
 
+RBUILD_ROOT:=$(dir $(lastword $(MAKEFILE_LIST)))../
+
 #
 #	Let's ensure we have a well purified MAKE environment, and make its output less
 #	redundant.
@@ -37,7 +39,7 @@ MAKEFLAGS += -rR --no-print-directory
 #
 #	A top-level configuration file can be found in the project root file.
 #
--include $(BASE).rbuild.config.mk
+-include $(RBUILD_BASE).rbuild.config.mk
 
 #
 #	This config file can be overridden or extended in any sub-directory
@@ -74,19 +76,19 @@ endif
 
 ifeq ($(RBUILD_TODO), 1)
 RBUILD_TODOSTRINGS="(TODO|FIXME|TOFIX|FINISHME|BROKEN)"
-POST_CC = $(Q)-grep -EHn $(RBUILD_TODOSTRINGS) $< | $(PTODO) $(BASE)rbuild.todo $(MODULE_NAME)
+POST_CC = $(Q)-grep -EHn $(RBUILD_TODOSTRINGS) $< | $(PTODO) $(RBUILD_BASE)rbuild.todo $(MODULE_NAME)
 endif
 
 #
 #	Include the different rbuild modules
 #
-include $(BASE).rbuild/verbosity.mk
-include $(BASE).rbuild/pretty.mk
-include $(BASE).rbuild/subdirs.mk
-include $(BASE).rbuild/clean.mk
-include $(BASE).rbuild/module-link.mk
-include $(BASE).rbuild/c-objects.mk
-include $(BASE).rbuild/cpp-objects.mk
+include $(RBUILD_BASE).rbuild/verbosity.mk
+include $(RBUILD_BASE).rbuild/pretty.mk
+include $(RBUILD_BASE).rbuild/subdirs.mk
+include $(RBUILD_BASE).rbuild/clean.mk
+include $(RBUILD_BASE).rbuild/module-link.mk
+include $(RBUILD_BASE).rbuild/c-objects.mk
+include $(RBUILD_BASE).rbuild/cpp-objects.mk
 
 #
 #	Rbuild Splash
@@ -98,10 +100,10 @@ else
 	@echo " Riegl Builder - Unified Build Environment"
 	@echo " Version ($(RBUILD_VERSION_MAJOR).$(RBUILD_VERSION_MINOR).$(RBUILD_VERSION_REVISION) - $(RBUILD_VERSION_NAME))"
 ifeq ($(RBUILD_TODO), 1)
-	@rm -rf $(BASE)rbuild.todo
-	@touch $(BASE)rbuild.todo
-	@echo "Filename                  : Line  : Module          : TODO message" >> $(BASE)rbuild.todo
-	@echo "===============================================================================" >> $(BASE)rbuild.todo
+	@rm -rf $(RBUILD_BASE)rbuild.todo
+	@touch $(RBUILD_BASE)rbuild.todo
+	@echo "Filename                  : Line  : Module          : TODO message" >> $(RBUILD_BASE)rbuild.todo
+	@echo "===============================================================================" >> $(RBUILD_BASE)rbuild.todo
 endif
 endif
 

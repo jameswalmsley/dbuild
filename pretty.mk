@@ -1,18 +1,19 @@
-PRETTY 		= $(BASE).dbuild/pretty/pretty.py
-PRETTIFY	= $(BASE).dbuild/pretty/prettify.py
-PCP			= $(BASE).dbuild/pretty/prettycp.py --dbuild "CP"
-PMD			= $(BASE).dbuild/pretty/prettymd.py
+PRETTY 		= $(DBUILD_ROOT).dbuild/pretty/pretty.py
+PRETTIFY	= $(DBUILD_ROOT).dbuild/pretty/prettify.py
+PCP			= $(DBUILD_ROOT).dbuild/pretty/prettycp.py --dbuild "CP"
+PMV			= $(DBUILD_ROOT).dbuild/pretty/prettymv.py --dbuild "MV"
+PMD			= $(DBUILD_ROOT).dbuild/pretty/prettymd.py
 PRM			= $(PRETTIFY) --dbuild "RM"
-PCHMOD		= $(BASE).dbuild/pretty/prettychmod.py
-PRETTYSAMBA	= $(BASE).dbuild/pretty/prettysamba.py
-PRETTYLINUX = $(BASE).dbuild/pretty/prettylinux.py
+PCHMOD		= $(DBUILD_ROOT).dbuild/pretty/prettychmod.py
+PRETTYSAMBA	= $(DBUILD_ROOT).dbuild/pretty/prettysamba.py
+PRETTYLINUX = $(DBUILD_ROOT).dbuild/pretty/prettylinux.py
 ifndef PRETTY_SUBKBUILD 
   PRETTY_SUBKBUILD = $(PRETTYLINUX)
 endif
 ifndef PRETTY_SUBGENERIC 
-  PRETTY_SUBGENERIC = $(BASE).dbuild/pretty/prettygeneric.py
+  PRETTY_SUBGENERIC = $(DBUILD_ROOT).dbuild/pretty/prettygeneric.py
 endif
-PTODO		= $(BASE).dbuild/pretty/todo.py
+PTODO		= $(DBUILD_ROOT).dbuild/pretty/todo.py
 
 PRETTYPOST	= $(PRETTY) "POST" $(@:%.post=%)
 PRETTYPREP	= $(PRETTY) "PREP" $(@:%.pre=%)
@@ -41,6 +42,17 @@ PCP_FLAGS=-r
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 PCP_PIPE=| $(PCP) $(MODULE_NAME)
 PCP_FLAGS=-vr
+endif
+
+#
+#	PMV Flags
+#
+PMV_PIPE=
+PMV_FLAGS=
+
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+PMV_PIPE=| $(PMV) $(MODULE_NAME)
+PMV_FLAGS=-v
 endif
 
 #

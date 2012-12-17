@@ -78,6 +78,10 @@ while(line):
             valid = True
         elif(stripped.startswith("make[") and ("Nothing to be done for" in stripped)):
                  valid = False
+        elif(stripped.split(" ")[0].endswith("moc")):
+            action = "MOC"
+            description = stripped.split("-o")[1].split(" ")[1].strip()
+            valid = True
         else:
             action = "MISC"
             description = line.strip()

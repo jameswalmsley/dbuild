@@ -20,7 +20,6 @@ if(len(sys.argv) > 1+offset):
 if(len(sys.argv) > 2+offset):
     module = sys.argv[2+offset]
 
-
 for line in sys.stdin:
     line = line.strip()
     if("removed" in line):
