@@ -19,7 +19,7 @@ ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CPP" $(MODULE_NAME) $(notdir $@)
 endif
 	@mkdir -p $(dir $@)
-	$(Q)$(CXX) -MD -MP $(CXXFLAGS) $< -o $@
+	$(Q)$(CXX) -c -MD -MP $(CXXFLAGS) $< -o $@
 	$(POST_CC)
 
 $(BUILD_DIR)%.o: $(BASE)%.cpp
@@ -27,7 +27,7 @@ ifeq ($(DBUILD_VERBOSE_CMD), 0)											# Pretty print on successful compile, 
 	$(Q)$(PRETTY) --dbuild "CPP" $(MODULE_NAME) $(notdir $@)
 endif
 	@mkdir -p $(dir $@)
-	$(Q)$(CXX) -MD -MP $(CXXFLAGS) $< -o $@
+	$(Q)$(CXX) -c -MD -MP $(CXXFLAGS) $< -o $@
 	$(POST_CC)
 
 %.o : %.cpp
@@ -35,7 +35,7 @@ ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CPP" $(MODULE_NAME) $(notdir $@)
 endif
 	@mkdir -p $(dir $@)
-	$(Q)$(CXX) -MD -MP $(CXXFLAGS) $< -o $@
+	$(Q)$(CXX) -c -MD -MP $(CXXFLAGS) $< -o $@
 	$(POST_CC)
 
 
@@ -44,7 +44,7 @@ ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CPP" $(MODULE_NAME) $(notdir $@)
 endif
 	@mkdir -p $(dir $@)
-	$(Q)$(CXX) -MD -MP $(CXXFLAGS) $< -o $@
+	$(Q)$(CXX) -c -MD -MP $(CXXFLAGS) $< -o $@
 	$(POST_CC)
 
 $(BUILD_DIR)%.o: $(BASE)%.cc
@@ -52,7 +52,7 @@ ifeq ($(DBUILD_VERBOSE_CMD), 0)											# Pretty print on successful compile, 
 	$(Q)$(PRETTY) --dbuild "CPP" $(MODULE_NAME) $(notdir $@)
 endif
 	@mkdir -p $(dir $@)
-	$(Q)$(CXX) -MD -MP $(CXXFLAGS) $< -o $@
+	$(Q)$(CXX) -c -MD -MP $(CXXFLAGS) $< -o $@
 	$(POST_CC)
 
 %.o : %.cc
@@ -60,6 +60,6 @@ ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CPP" $(MODULE_NAME) $(notdir $@)
 endif
 	@mkdir -p $(dir $@)
-	$(Q)$(CXX) -MD -MP $(CXXFLAGS) $< -o $@
+	$(Q)$(CXX) -c -MD -MP $(CXXFLAGS) $< -o $@
 	$(POST_CC)
 
