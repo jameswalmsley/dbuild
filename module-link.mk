@@ -28,6 +28,7 @@ $(RI_TARGETS): $(OBJECTS)
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "LD" $(MODULE_NAME) $@
 endif
+	@mkdir -p $(dir $@)
 	$(Q)$(CXX) $(OBJECTS) $(ARCHIVES) $(LDFLAGS) $(LDLIBS) -o $@
 
 
@@ -35,6 +36,7 @@ endif
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CC|LD" $(MODULE_NAME) $@
 endif
+	@mkdir -p $(dir $@)
 	$(Q)$(CC) -MD -MP $(CFLAGS) $< -o $@.o
 	$(POST_CC)
 	$(Q)$(CXX) $(LDFLAGS) $(LDLIBS) $@.o -o $@
@@ -44,6 +46,7 @@ output/%: source/%.c
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CC|LD" $(MODULE_NAME) $@
 endif
+	@mkdir -p $(dir $@)
 	$(Q)$(CC) -MD -MP $(CFLAGS) $< -o $@.o
 	$(POST_CC)
 	$(Q)$(CXX) $(LDFLAGS) $(LDLIBS) $@.o -o $@
@@ -53,6 +56,7 @@ endif
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CPP|LD" $(MODULE_NAME) $@
 endif
+	@mkdir -p $(dir $@)
 	$(Q)$(CXX) -MD -MP $(CXXFLAGS) $< -o $@.o
 	$(POST_CC)
 	$(Q)$(CXX) $(LDFLAGS) $(LDLIBS) $@.o -o $@
@@ -62,6 +66,7 @@ output/%: source/%.cpp
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CPP|LD" $(MODULE_NAME) $@
 endif
+	@mkdir -p $(dir $@)
 	$(Q)$(CXX) -MD -MP $(CXXFLAGS) $< -o $@.o
 	$(POST_CC)
 	$(Q)$(CXX) $(LDFLAGS) $(LDLIBS) $@.o -o $@
@@ -71,6 +76,7 @@ endif
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CPP|LD" $(MODULE_NAME) $@
 endif
+	@mkdir -p $(dir $@)
 	$(Q)$(CXX) -MD -MP $(CXXFLAGS) $< -o $@.o
 	$(POST_CC)
 	$(Q)$(CXX) $(LDFLAGS) $(LDLIBS) $@.o -o $@
@@ -80,6 +86,7 @@ output/%: source/%.cc
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CPP|LD" $(MODULE_NAME) $@
 endif
+	@mkdir -p $(dir $@)
 	$(Q)$(CXX) -MD -MP $(CXXFLAGS) $< -o $@.o
 	$(POST_CC)
 	$(Q)$(CXX) $(LDFLAGS) $(LDLIBS) $@.o -o $@
@@ -89,23 +96,27 @@ endif
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "LD" $(MODULE_NAME) $@
 endif
+	@mkdir -p $(dir $@)
 	$(Q)$(CXX) $(LDFLAGS) $(LDLIBS) $< -o $@
 
 output/%: source/%.o
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "LD" $(MODULE_NAME) $@
 endif
+	@mkdir -p $(dir $@)
 	$(Q)$(CXX) $(LDFLAGS) $(LDLIBS) $< -o $@
 
 %.so: %.o
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "LD" $(MODULE_NAME) $@
 endif
+	@mkdir -p $(dir $@)
 	$(Q)$(CXX) $< $(LDFLAGS) $(LDLIBS) -o $@
 
 output/%.so: source/%.o
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "LD" $(MODULE_NAME) $@
 endif
+	@mkdir -p $(dir $@)
 	$(Q)$(CXX) $< $(LDFLAGS) $(LDLIBS) -o $@
 
