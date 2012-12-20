@@ -174,9 +174,9 @@ SUBDIR_LIST += $(DSUBDIR_LIST)
 
 DEPS_ROOT_DIR =.deps/
 
-$(DSUBDIR_LIST:%=%.deps):
+$(DSUBDIR_LIST:%=%.deps): 
 	$(Q)mkdir -p $(DEPS_ROOT_DIR)$(dir $@)
-	$(Q)bash $(DBUILD_ROOT).dbuild/makedeps.sh $(DEPS_ROOT_DIR)$(@:%.deps=%) $(@:%.deps=%) > $(DEPS_ROOT_DIR)$(@:%.deps=%).d
+	$(Q)bash $(DBUILD_ROOT).dbuild/makedeps.sh $(DEPS_ROOT_DIR)$(@:%.deps=%) $(@:%.deps=%) $(EXTRA_DEPSDIRS) > $(DEPS_ROOT_DIR)$(@:%.deps=%).d
 
 initdeps:
 	$(Q)rm -rf $(DEPS_ROOT_DIR)
@@ -205,11 +205,11 @@ endif
 	$(Q)touch $@
 
 $(DSUBDIRS:%=%):
-	$(Q)$(MAKE) $(@:%=$(DEPS_ROOT_DIR)%.stamp)
+	$(Q)$(MAKE) $(JOBS) $(@:%=$(DEPS_ROOT_DIR)%.stamp)
 
 $(DSUBDIRS:%=%.force):
 	$(Q)rm -f $(@:%.force=$(DEPS_ROOT_DIR)%.stamp)
-	$(Q)$(MAKE) $(@:%.force=%)
+	$(Q)$(MAKE) $(JOBS) $(@:%.force=%)
 
 $(DSUBDIRS:%=%.clean):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
@@ -237,11 +237,11 @@ endif
 	$(Q)touch $@;
 
 $(DSUB_KBUILD:%=%): 
-	$(Q)$(MAKE) $(@:%=$(DEPS_ROOT_DIR)%.stamp)
+	$(Q)$(MAKE) $(JOBS) $(@:%=$(DEPS_ROOT_DIR)%.stamp)
 
 $(DSUB_KBUILD:%=%.force):
 	$(Q)rm -f $(@:%.force=$(DEPS_ROOT_DIR)%.stamp)
-	$(Q)$(MAKE) $(@:%.force=%)
+	$(Q)$(MAKE) $(JOBS) $(@:%.force=%)
 
 $(DSUB_KBUILD:%=%.clean): MAKEFLAGS=
 $(DSUB_KBUILD:%=%.clean):
@@ -270,11 +270,11 @@ endif
 	$(Q)touch $@;
 
 $(DSUB_GENERIC:%=%): 
-	$(Q)$(MAKE) $(@:%=$(DEPS_ROOT_DIR)%.stamp)
+	$(Q)$(MAKE) $(JOBS) $(@:%=$(DEPS_ROOT_DIR)%.stamp)
 
 $(DSUB_GENERIC:%=%.force):
 	$(Q)rm -f $(@:%.force=$(DEPS_ROOT_DIR)%.stamp)
-	$(Q)$(MAKE) $(@:%.force=%)
+	$(Q)$(MAKE) $(JOBS) $(@:%.force=%)
 
 $(DSUB_GENERIC:%=%.clean): MAKEFLAGS=
 $(DSUB_GENERIC:%=%.clean):
@@ -303,11 +303,11 @@ endif
 	$(Q)touch $@
 
 $(DSUB_SAFE:%=%):
-	$(Q)$(MAKE) $(@:%=$(DEPS_ROOT_DIR)%.stamp)
+	$(Q)$(MAKE) $(JOBS) $(@:%=$(DEPS_ROOT_DIR)%.stamp)
 
 $(DSUB_SAFE:%=%.force):
 	$(Q)rm -f $(@:%.force=$(DEPS_ROOT_DIR)%.stamp)
-	$(Q)$(MAKE) $(@:%.force=%)
+	$(Q)$(MAKE) $(JOBS) $(@:%.force=%)
 
 $(DSUB_SAFE:%=%.clean): MAKEFLAGS=
 $(DSUB_SAFE:%=%.clean):

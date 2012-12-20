@@ -9,4 +9,4 @@ depsdir() {
 }
 
 echo
-depsdir $1 $2
+depsdir $@
