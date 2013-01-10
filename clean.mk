@@ -32,6 +32,7 @@ endif
 ifeq ($(strip $(BASIC_TARGETS)),)
 else
 	$(Q)rm $(PRM_FLAGS) $(BASIC_TARGETS:%=%.d)	$(PRM_PIPE)
+	$(Q)rm $(PRM_FLAGS) $(BASIC_TARGETS:%.so=%.d) $(PRM_PIPE)
 	$(Q)rm $(PRM_FLAGS) $(BASIC_TARGETS:output/%=source/%.d)	$(PRM_PIPE)
 	$(Q)rm $(PRM_FLAGS) $(BASIC_TARGETS)	$(PRM_PIPE)
 endif
