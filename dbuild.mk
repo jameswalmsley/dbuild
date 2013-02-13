@@ -78,6 +78,10 @@ override SIZE		= $(TOOLCHAIN)size
 
 CFLAGS		+= -c
 
+CFLAGS 		+= $(ADD_CFLAGS)
+CXXFLAGS 	+= $(ADD_CXXFLAGS)
+LDFLAGS 	+= $(ADD_LDFLAGS)
+
 #
 #	Incase the objects.mk or the .config.mk file does not exist, create a blank one.
 #	We should eventually integrate this with KConfig or something nice.
@@ -103,7 +107,7 @@ include $(DBUILD_ROOT).dbuild/info.mk
 
 #
 #	Provide a default target named all,
-#	This is dependent on $(TARGETS), $(MODULE_TARGET) and $(SUBDIRS) 
+#	This is dependent on $(TARGETS), $(MODULE_TARGET) and $(SUBDIRS)
 #
 #	All is finally dependent on silent, to keep make silent when it has
 #	nothing to do.
@@ -122,8 +126,11 @@ else
 	@echo " Version ($(DBUILD_VERSION_MAJOR).$(DBUILD_VERSION_MINOR).$(DBUILD_VERSION_REVISION) - $(DBUILD_VERSION_NAME))"
 endif
 
+EXPORTS=CFLAGS
+
 #
 #	Finally provide an implementation of the silent target.
 #
 silent:
 	@:
+
