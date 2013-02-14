@@ -31,12 +31,6 @@ DBUILD_ROOT:=$(dir $(lastword $(MAKEFILE_LIST)))../
 #
 MAKEFLAGS += -rR --no-print-directory
 
-#
-#	Default number of max parallel make jobs.
-#	(This can be overridden in any of the dbuild config files)
-#
-export JOBS=-j16
-
 all: dbuild_splash _all
 
 #
