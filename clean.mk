@@ -2,7 +2,7 @@
 #	Default Clean Process.
 #
 
-
+.SECONDEXPANSION:
 clean:
 ifeq ($(strip $(OBJECTS)),)
 else
@@ -35,6 +35,11 @@ else
 	$(Q)rm $(PRM_FLAGS) $(BASIC_TARGETS:%.so=%.d) $(PRM_PIPE)
 	$(Q)rm $(PRM_FLAGS) $(BASIC_TARGETS:output/%=source/%.d)	$(PRM_PIPE)
 	$(Q)rm $(PRM_FLAGS) $(BASIC_TARGETS)	$(PRM_PIPE)
+endif
+ifeq ($(strip $(MULTI_TARGETS)),)
+else
+#	$(Q)rm $(PRM_FLAGS) $($(patsubst %,%-OBJECTS,$(MULTI_TARGETS)):%=%.d)	$(PRM_PIPE)
+	$(Q)rm $(PRM_FLAGS) $(MULTI_TARGETS)	$(PRM_PIPE)
 endif
 ifeq ($(CLEAN_EXTRAS), 1)
 	$(Q)rm $(PRM_FLAGS) $(CLEAN_LIST)		$(PRM_PIPE)

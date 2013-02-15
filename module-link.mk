@@ -31,6 +31,14 @@ endif
 	@mkdir -p $(dir $@)
 	$(Q)$(CXX) $(OBJECTS) $(ARCHIVES) $(LDFLAGS) $(LDLIBS) -o $@
 
+.SECONDEXPANSION:
+$(MULTI_TARGETS): %: $$(%-OBJECTS)
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "LD" $(MODULE_NAME) $@
+endif
+	@mkdir -p $(dir $@)
+	$(Q)$(CXX) $^ $(ARCHIVES) $(LDFLAGS) $(LDLIBS) -o $@
+
 
 %: %.c
 ifeq ($(DBUILD_VERBOSE_CMD), 0)

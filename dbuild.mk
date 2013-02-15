@@ -107,7 +107,7 @@ include $(DBUILD_ROOT).dbuild/info.mk
 #	nothing to do.
 #
 dbuild_entry: dbuild_splash | _all
-_all: $(TARGETS) $(BASIC_TARGETS) $(SUBDIR_LIST) $(MODULE_TARGET) | silent
+_all: $(TARGETS) $(BASIC_TARGETS) $(MULTI_TARGETS) $(SUBDIR_LIST) $(MODULE_TARGET) | silent
 
 #
 #	DBuild Splash
