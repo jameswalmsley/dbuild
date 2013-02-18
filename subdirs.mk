@@ -95,7 +95,7 @@ endif
 #	This provides thes case for normalising these outputs as much as possible.
 #	The PRETTY_SUBGENERIC parser is used, is very basic, and should be improved over time.
 #
-$(SUB_GENERIC:%=%): MAKEFLAGS= 
+$(SUB_GENERIC:%=%): MAKEFLAGS=
 $(SUB_GENERIC:%=%):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $(@:%=%)"
@@ -110,7 +110,7 @@ endif
 #
 #	Again provide a clean method for that.
 #
-$(SUB_GENERIC:%=%.clean): MAKEFLAGS= 
+$(SUB_GENERIC:%=%.clean): MAKEFLAGS=
 $(SUB_GENERIC:%=%.clean):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean=%)"
@@ -155,7 +155,7 @@ endif
 
 ###########################################################################################################
 #
-# This provides a module dependency mechanism. Especially usefull for libraries which require 
+# This provides a module dependency mechanism. Especially usefull for libraries which require
 # configuration before make.
 #
 DSUBDIRS 	 += $(DSUBDIRS-y)
@@ -163,16 +163,16 @@ DSUB_GENERIC += $(DSUB_GENERIC-y)
 DSUB_KBUILD	 += $(DSUB_KBUILD-y)
 DSUB_SAFE 	 += $(DSUB_SAFE-y)
 
-DSUBDIR_LIST += $(DSUBDIRS) 
-DSUBDIR_LIST += $(DSUB_GENERIC) 
-DSUBDIR_LIST += $(DSUB_KBUILD) 
-DSUBDIR_LIST += $(DSUB_SAFE) 
+DSUBDIR_LIST += $(DSUBDIRS)
+DSUBDIR_LIST += $(DSUB_GENERIC)
+DSUBDIR_LIST += $(DSUB_KBUILD)
+DSUBDIR_LIST += $(DSUB_SAFE)
 
 SUBDIR_LIST += $(DSUBDIR_LIST)
 
 DEPS_ROOT_DIR =.deps/
 
-$(DSUBDIR_LIST:%=%.deps): 
+$(DSUBDIR_LIST:%=%.deps):
 	$(Q)mkdir -p $(DEPS_ROOT_DIR)$(dir $@)
 	$(Q)bash $(DBUILD_ROOT).dbuild/makedeps.sh $(DEPS_ROOT_DIR)$(@:%.deps=%) $(@:%.deps=%) $(EXTRA_DEPSDIRS) > $(DEPS_ROOT_DIR)$(@:%.deps=%).d
 
@@ -233,7 +233,7 @@ endif
 	-$(Q)$(MAKE)  DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(@:$(DEPS_ROOT_DIR)%.stamp=%).post
 	$(Q)touch $@;
 
-$(DSUB_KBUILD:%=%): 
+$(DSUB_KBUILD:%=%):
 	$(Q)$(MAKE) SUBDIR_PARAMS=$(SUBDIR_PARAMS) SUBDIR_TARGET=$(SUBDIR_TARGET) $(@:%=$(DEPS_ROOT_DIR)%.stamp)
 
 $(DSUB_KBUILD:%=%.force):
@@ -253,7 +253,7 @@ endif
 #	For generic sub directories
 #
 $(DSUB_GENERIC:%=$(DEPS_ROOT_DIR)%.stamp): MAKEFLAGS=
-$(DSUB_GENERIC:%=$(DEPS_ROOT_DIR)%.stamp): 
+$(DSUB_GENERIC:%=$(DEPS_ROOT_DIR)%.stamp):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $(@:$(DEPS_ROOT_DIR)%.stamp=%)"
 ifeq ($(DBUILD_VERBOSE_DEPS), 1)
@@ -265,7 +265,7 @@ endif
 	$(Q)$(MAKE)  MAKEFLAGS= $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(@:$(DEPS_ROOT_DIR)%.stamp=%).post;
 	$(Q)touch $@;
 
-$(DSUB_GENERIC:%=%): 
+$(DSUB_GENERIC:%=%):
 	$(Q)$(MAKE)  $(@:%=$(DEPS_ROOT_DIR)%.stamp)
 
 $(DSUB_GENERIC:%=%.force):
@@ -286,7 +286,7 @@ endif
 #	For safe sub directories
 #
 $(DSUB_SAFE:%=$(DEPS_ROOT_DIR)%.stamp): MAKEFLAGS=
-$(DSUB_SAFE:%=$(DEPS_ROOT_DIR)%.stamp): 
+$(DSUB_SAFE:%=$(DEPS_ROOT_DIR)%.stamp):
 ifeq ($(DBUILD_VERBOSE_CMD), 0)
 	$(Q)$(PRETTY) --dbuild "!SAFE!" $(MODULE_NAME) "Building $(@:$(DEPS_ROOT_DIR)%.stamp=%)"
 ifeq ($(DBUILD_VERBOSE_DEPS), 1)
@@ -321,7 +321,7 @@ endif
 # Other usefull targets and dependencies for subdirs ...
 #
 $(SUBDIR_LIST:%=%.install): %.install: %
-	$(Q)$(MAKE) -C $(@:%.install=%) $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) DESTDIR=$(DESTDIR) install 
+	$(Q)$(MAKE) -C $(@:%.install=%) $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) DESTDIR=$(DESTDIR) install
 
 clean: $(SUBDIR_LIST:%=%.clean)
 
@@ -329,6 +329,8 @@ $(SUBDIR_LIST:%=%.pre): | silent
 $(SUBDIR_LIST:%=%.post): | silent
 $(SUBDIR_LIST:%=%.clean.pre): | silent
 $(SUBDIR_LIST:%=%.clean.post): | silent
+$(SUBDIR_LIST:%=%.install): | silent
+$(SUBDIR_LIST:%=$(DEPS_ROOT_DIR)%.stamp): | silent
 
 
 .PHONY: \
