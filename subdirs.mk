@@ -24,6 +24,7 @@ SUBDIRS 	+= $(SUBDIRS-y)
 SUB_KBUILD 	+= $(SUB_KBUILD-y)
 SUB_GENERIC += $(SUB_GENERIC-y)
 SUB_SAFE 	+= $(SUB_SAFE-y)
+SUB_NOMAKE	+= $(SUB_NOMAKE-y)
 
 #
 #	Concatenate all lists into a single SUBDIR_LIST variable for convenience.
@@ -32,6 +33,7 @@ SUBDIR_LIST += $(SUBDIRS)
 SUBDIR_LIST += $(SUB_KBUILD)
 SUBDIR_LIST += $(SUB_GENERIC)
 SUBDIR_LIST += $(SUB_SAFE)
+SUBDIR_LIST += $(SUB_NOMAKE)
 
 ###########################################################################################################
 #
@@ -155,6 +157,30 @@ endif
 
 ###########################################################################################################
 #
+#	This is for sub directories which use no make build system.
+#
+$(SUB_NOMAKE:%=%): MAKEFLAGS=
+$(SUB_NOMAKE:%=%):
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $(@:%=%)"
+ifeq ($(DBUILD_VERBOSE_DEPS), 1)
+	$(Q)$(PRETTY) --dbuild "^DEPS^" "$@" "$^"
+endif
+endif
+	$(Q)$(MAKE) $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.do
+
+#
+#	Again provide a clean method for that.
+#
+$(SUB_NOMAKE:%=%.clean): MAKEFLAGS=
+$(SUB_NOMAKE:%=%.clean):
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean=%)"
+endif
+	$(Q)$(MAKE) $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.do
+
+###########################################################################################################
+#
 # This provides a module dependency mechanism. Especially usefull for libraries which require
 # configuration before make.
 #
@@ -162,11 +188,13 @@ DSUBDIRS 	 += $(DSUBDIRS-y)
 DSUB_GENERIC += $(DSUB_GENERIC-y)
 DSUB_KBUILD	 += $(DSUB_KBUILD-y)
 DSUB_SAFE 	 += $(DSUB_SAFE-y)
+DSUB_NOMAKE += $(DSUB_NOMAKE-y)
 
 DSUBDIR_LIST += $(DSUBDIRS)
 DSUBDIR_LIST += $(DSUB_GENERIC)
 DSUBDIR_LIST += $(DSUB_KBUILD)
 DSUBDIR_LIST += $(DSUB_SAFE)
+DSUBDIR_LIST += $(DSUB_NOMAKE)
 
 SUBDIR_LIST += $(DSUBDIR_LIST)
 
@@ -315,6 +343,34 @@ endif
 	-$(Q)$(MAKE) -j1 MAKEFLAGS= $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.post
 	$(Q)rm -f $(@:%.clean=$(DEPS_ROOT_DIR)%.stamp)
 
+#
+#	For sub directories with no make build system
+#
+$(DSUB_NOMAKE:%=$(DEPS_ROOT_DIR)%.stamp): MAKEFLAGS=
+$(DSUB_NOMAKE:%=$(DEPS_ROOT_DIR)%.stamp):
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "BUILD" $(MODULE_NAME) "Building $(@:$(DEPS_ROOT_DIR)%.stamp=%)"
+ifeq ($(DBUILD_VERBOSE_DEPS), 1)
+	$(Q)$(PRETTY) --dbuild "^DEPS^" "$(@:$(DEPS_ROOT_DIR)%.stamp=%)" "$^"
+endif
+endif
+	$(Q)$(MAKE)  MAKEFLAGS= $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $(@:$(DEPS_ROOT_DIR)%.stamp=%).do
+	$(Q)touch $@;
+
+$(DSUB_NOMAKE:%=%):
+	$(Q)$(MAKE)  $(@:%=$(DEPS_ROOT_DIR)%.stamp)
+
+$(DSUB_NOMAKE:%=%.force):
+	$(Q)rm -f $(@:%.force=$(DEPS_ROOT_DIR)%.stamp)
+	$(Q)$(MAKE)  $(@:%.force=%)
+
+$(DSUB_NOMAKE:%=%.clean): MAKEFLAGS=
+$(DSUB_NOMAKE:%=%.clean):
+ifeq ($(DBUILD_VERBOSE_CMD), 0)
+	$(Q)$(PRETTY) --dbuild "CLEAN" $(MODULE_NAME) "$(@:%.clean=%)"
+endif
+	$(Q)$(MAKE)  MAKEFLAGS= $(MAKE_FLAGS) DBUILD_SPLASHED=1 $(SUBDIR_PARAMS) $@.do
+	$(Q)rm -f $(@:%.clean=$(DEPS_ROOT_DIR)%.stamp)
 
 ###########################################################################################################
 #
@@ -336,10 +392,12 @@ $(SUBDIR_LIST:%=$(DEPS_ROOT_DIR)%.stamp): | silent
 .PHONY: \
 		$(SUBDIR_LIST) \
 		$(SUBDIR_LIST:%=%.pre) \
+		$(SUBDIR_LIST:%=%.do) \
 		$(SUBDIR_LIST:%=%.post) \
 		$(SUBDIR_LIST:%=%.force) \
 		$(SUBDIR_LIST:%=%.install) \
 		clean \
 		$(SUBDIR_LIST:%=%.clean) \
 		$(SUBDIR_LIST:%=%.clean.pre) \
+		$(SUBDIR_LIST:%=%.clean.do) \
 		$(SUBDIR_LIST:%=%.clean.post) \
