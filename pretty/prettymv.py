@@ -22,6 +22,12 @@ if(len(sys.argv) >= 3+offset):
     module = sys.argv[2+offset]
 
 for line in sys.stdin:
-    source = line.split("`")[1].split("'")[0]
-    dest = line.split("`")[2].split("'")[0]
+    line = line.strip()
+    line = line.rstrip()
+    line = line.lstrip()
+    line = line.decode('utf8')
+
+    source = line.split(" ")[0][1:][:-1]
+    dest = line.split(" ")[2][1:][:-1]
+
     prettyformat.pretty(command, module, source + " -> " + dest, bCustom)
