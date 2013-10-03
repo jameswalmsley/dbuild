@@ -76,6 +76,16 @@ override OBJCOPY	= $(TOOLCHAIN)objcopy
 override OBJDUMP	= $(TOOLCHAIN)objdump
 override SIZE		= $(TOOLCHAIN)size
 
+export 	TOOLCHAIN
+export	AR
+export 	AS
+export	CC
+export	CXX
+export	LD
+export	OBJCOPY
+export	OBJDUMP
+export	SIZE
+
 CFLAGS		+= -c
 
 CFLAGS 		+= $(ADD_CFLAGS)
@@ -129,7 +139,7 @@ else
 	@echo " Version ($(DBUILD_VERSION_MAJOR).$(DBUILD_VERSION_MINOR).$(DBUILD_VERSION_REVISION) - $(DBUILD_VERSION_NAME))"
 endif
 
-EXPORTS=CFLAGS
+EXPORTS=CFLAGS TOOLCHAIN
 
 #
 #	Finally provide an implementation of the silent target.
