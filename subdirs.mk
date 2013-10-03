@@ -16,6 +16,8 @@
 #
 include $(addsuffix objects.mk, $(SUB_OBJDIRS))
 include $(addsuffix objects.mk, $(SUB_OBJDIRS-y))
+-include $(addsuffix .config.mk, $(SUB_OBJDIRS))
+-include $(addsuffix .config.mk, $(SUB_OBJDIRS-y))
 
 #
 #	Add optional SUBDIR variables for simple build configuration system.
@@ -389,6 +391,9 @@ $(SUBDIR_LIST:%=%.install): %.install: %
 
 clean: $(SUBDIR_LIST:%=%.clean)
 
+info.cleanlist:
+	@echo $(SUBDIR_LIST:%=%.clean)
+
 $(SUBDIR_LIST:%=%.pre): | silent
 $(SUBDIR_LIST:%=%.post): | silent
 $(SUBDIR_LIST:%=%.clean.pre): | silent
@@ -409,3 +414,4 @@ $(SUBDIR_LIST:%=$(DEPS_ROOT_DIR)%.stamp): | silent
 		$(SUBDIR_LIST:%=%.clean.pre) \
 		$(SUBDIR_LIST:%=%.clean.do) \
 		$(SUBDIR_LIST:%=%.clean.post) \
+		info.cleanlist

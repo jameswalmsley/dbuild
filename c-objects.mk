@@ -44,3 +44,11 @@ endif
 	$(Q)$(CC) -MD -MP $(CFLAGS) $< -o $@
 	$(POST_CC)
 
+$(BUILD_DIR)application/%.o: $(APP_DIR)/%.c
+ifeq ($(DBUILD_VERBOSE_CMD), 0)											# Pretty print on successful compile, but still display errors when they occur.
+	$(Q)$(PRETTY) --dbuild "CC" $(MODULE_NAME) $(subst $(BUILD_DIR),"",$@)
+endif
+	@mkdir -p $(dir $@)
+	$(Q)$(CC) -MD -MP $(CFLAGS) $< -o $@
+	$(POST_CC)
+

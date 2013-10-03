@@ -10,15 +10,15 @@
 #	@see		github.com/FullFAT/FullFAT/
 #	@author		James Walmsley	<jwalmsley@riegl.com>
 #
-#	@version	1.3.0 (Archimedes)
+#	@version	1.5.0 (Fermat)
 #
 
 DBUILD_VERSION_MAJOR=1
-DBUILD_VERSION_MINOR=3
-DBUILD_VERSION_REVISION=1
+DBUILD_VERSION_MINOR=5
+DBUILD_VERSION_REVISION=0
 
-DBUILD_VERSION_NAME=Archimedes
-DBUILD_VERSION_DATE=November 2012
+DBUILD_VERSION_NAME=Fermat
+DBUILD_VERSION_DATE=October 2013
 
 #
 #	Get dbuild root directory.
@@ -31,7 +31,7 @@ DBUILD_ROOT:=$(dir $(lastword $(MAKEFILE_LIST)))../
 #
 MAKEFLAGS += -rR --no-print-directory
 
-all: dbuild_splash _all
+all: dbuild_entry _all
 
 #
 #	A top-level configureation file can be found in the project root dir.
@@ -47,7 +47,7 @@ all: dbuild_splash _all
 #	Optional Include directive, blue build attempts to build using lists of objects,
 #	targets and subdirs as found in objects.mk and subdirs.mk
 #
--include .config.mk
+-include $(DBUILD_ROOT).config.mk
 -include objects.mk
 -include targets.mk
 -include subdirs.mk
@@ -56,6 +56,12 @@ all: dbuild_splash _all
 #	Simple backwards compatible for configurable object builds!
 #
 OBJECTS += $(OBJECTS-y)
+
+#
+#	A config file can be overidden or extended in any sub-directory
+#
+-include dbuild.config.mk
+-include $(BUILD_ROOT)dbuild.config.mk
 
 #
 #	Defaults for compile/build toolchain
@@ -86,6 +92,8 @@ LDFLAGS 	+= $(ADD_LDFLAGS)
 objects.mk:
 	@touch objects.mk
 
+$(TARGETS) $(TARGET_DEPS): .config.mk
+
 $(TARGETS): objects.mk .config.mk
 
 include $(DBUILD_ROOT).dbuild/verbosity.mk
@@ -107,6 +115,7 @@ include $(DBUILD_ROOT).dbuild/info.mk
 #	nothing to do.
 #
 dbuild_entry: dbuild_splash | _all
+$(TARGETS) $(SUBDIR_LIST) $(MODULE_TARGET) $(OBJECTS) clean: | dbuild_splash
 _all: $(TARGETS) $(BASIC_TARGETS) $(MULTI_TARGETS) $(SUBDIR_LIST) $(MODULE_TARGET) | silent
 
 #
@@ -127,4 +136,3 @@ EXPORTS=CFLAGS
 #
 silent:
 	@:
-
