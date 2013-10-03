@@ -72,7 +72,7 @@ CONFIG_HEADER_NAME ?= "config.h"
 #
 #	Defaults for compile/build toolchain
 #
-override TOOLCHAIN 	?= $($(CONFIG_)TOOLCHAIN)
+override TOOLCHAIN 	:= $(shell echo $($(CONFIG_)TOOLCHAIN))
 override AR			= $(TOOLCHAIN)ar
 override AS			= $(TOOLCHAIN)as
 override CC		 	= $(TOOLCHAIN)gcc
