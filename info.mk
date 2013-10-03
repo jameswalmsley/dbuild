@@ -4,9 +4,10 @@ info.config:
 	@echo "TOOLCHAIN: " $($(CONFIG_)TOOLCHAIN)
 
 info.toolchain:
-	@echo "TOOLCHAIN: " $(TOOLCHAIN)
-	@echo "CC       : " $(CC)
-	@echo "CXX      : " $(CXX) 
+	@echo "BUILD_ROOT: " $(DBUILD_ROOT)
+	@echo "TOOLCHAIN : " $(TOOLCHAIN)
+	@echo "CC        : " $(CC)
+	@echo "CXX       : " $(CXX)
 
 info.subdirs:
 	@echo $(SUBDIRS)
